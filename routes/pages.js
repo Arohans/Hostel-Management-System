@@ -128,7 +128,7 @@ router.get('/admin/regstaff', authController.adminisLoggedIn, (req, res) => {
         return res.send("<script>alert('Login Required!'); window.location.href = '/';</script>");
     }
 });
-router.use('/publishnotice',authController.publishnotice, (req, res) => {
+router.use('/regstaff',authController.regstaff, (req, res) => {
     res.render("admindash",{username:req.user.username})
 });
 

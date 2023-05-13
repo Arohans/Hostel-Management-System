@@ -90,6 +90,20 @@ exports.publishnotice = (req, res) => {
     
 }
 
+exports.regstaff = async (req, res) => {
+    const { username,name,phone} = req.body;
+    const password = username + '@' + phone;
+  
+      let hashedPassword = await bcrypt.hash(password, 8);
+            db.query('INSERT INTO staff SET ?', { username:username, name: name, phone: phone, password: hashedPassword }, (err, results) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    return res.send("<script>alert('Registered Successfully!'); window.location.href = '/admin';</script>");
+                }
+            })
+           
+}
 
 exports.adminlogout = (req, res) => {
     res.cookie('userSave', 'logout', {
