@@ -20,6 +20,7 @@
   }
   .swiper-wrapper{
     padding: 90px;
+    
   }
   .swiper-container {
       width: 100%;
@@ -28,6 +29,8 @@
   .swiper-slide {
       text-align: center;
       font-size: 18px;
+      min-height: 60vw;
+      min-width: 30vw;
       width: auto;
       padding: 5px;
 
@@ -52,6 +55,7 @@
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     height: 50vh;
+    width: auto;
     /* margin-bottom: 20px; */
   }
   
@@ -76,3 +80,5 @@
     color: #fff;
     margin-top: 10px;
   }
+
+  

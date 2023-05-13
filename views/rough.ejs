@@ -45,8 +45,32 @@
            </section>
 
           <section class="mid-right" style="display: flex; flex-direction: column;">
-            <h1 class="welcome-text" style="font-size:6vw;">Hi,</h1>
-            <h1 class="welcome-text" style="font-size:6vw;">What are you upto?</h1>
+            <h1>Notices</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Heading</th>
+              <th>Notice Body</th>
+              <th>Created At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% notices.forEach(function(notice) { %>
+              <tr>
+                <td><%= notice.heading %></td>
+                <td><%= notice.nbody %></td>
+                <td><%= notice.created_at %></td>
+                <td>
+                  <form action="/delete-notice" method="POST">
+                    <input type="hidden" name="noticeId" value="<%= notice.id %>">
+                    <button type="submit">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
           </section>
       </section>
     </main>

@@ -23,7 +23,7 @@ router.get('/NoticeBoard', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        res.render('notices', { notices: results });
+        res.render('NoticeBoard', { notices: results });
       }
     });
   });
@@ -74,7 +74,7 @@ router.use('/admin/addstudent', student.add, (req, res) => {
         res.sendFile("home.html", { root: './public/' });
     }
 })
-//Notice Board
+//Notices
 router.get('/admin/publishnotice', authController.adminisLoggedIn, (req, res) => {
     if (req.user) {
         // uname=req.user.username;
@@ -82,6 +82,29 @@ router.get('/admin/publishnotice', authController.adminisLoggedIn, (req, res) =>
     } else {
         return res.send("<script>alert('Login Required!'); window.location.href = '/';</script>");
     }
+});
+
+router.get('/admin/notices',authController.adminisLoggedIn, (req, res) => {
+    db.query('SELECT * FROM notices', (err, results) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render('Notices', { notices: results, username: req.user.username });
+
+      }
+    });
+  });
+
+router.post('/delete-notice', (req, res) => {
+  const noticeId = req.body.noticeId;
+  db.query('DELETE FROM notices WHERE id = ?', [noticeId], (err, results) => {
+    if (err) {
+      console.log(err);
+    } else {
+        return res.send("<script>alert('Notice deleted successfully!'); window.location.href = '/admin';</script>");
+
+    }
+  });
 });
 
 //Register Warden
@@ -108,5 +131,11 @@ router.get('/admin/regstaff', authController.adminisLoggedIn, (req, res) => {
 router.use('/publishnotice',authController.publishnotice, (req, res) => {
     res.render("admindash",{username:req.user.username})
 });
+
+//signout
+router.use('/admin/signout',authController.adminlogout, (req, res) => {
+    return res.send("<script>alert('Logged Out!'); window.location.href = '/';</script>");
+});
+
 
 module.exports = router;

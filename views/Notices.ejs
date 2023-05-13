@@ -5,25 +5,51 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <title>HMS</title>
+    <title>Admin Home</title>
 
     <link rel="stylesheet" href="/css/navbar.css" />
     <link rel="stylesheet" href="/css/cards.css" />
     <link rel="stylesheet" href="/css/welcome-text.css" />
     <link rel="stylesheet" href="/css/cat-welcome.css" />
-    <link rel="stylesheet" href="/css/form.css" />
+    <!-- <link rel="stylesheet" href="/css/form.css" /> -->
     <link rel="stylesheet" href="/css/NoticeBoard.css" />
 
-    <link href='https://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
-    <link
-       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
-    />
-    
-    
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Gochi+Hand');
-    </style>
+        h1 {
+          text-align: center;
+        }
+      
+        table {
+          width: 70vw;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+      
+        th, td {
+          padding: 10px;
+          text-align: left;
+          border: 1px solid #ddd;
+        }
+      
+        th {
+          background-color: #f2f2f2;
+          font-weight: bold;
+        }
+      
+        .delete-button {
+          background-color: #ff0000;
+          color: #fff;
+          padding: 5px 10px;
+          border: none;
+          cursor: pointer;
+        }
+      
+        .delete-button:hover {
+          background-color: #cc0000;
+        }
+      </style>
+      
+  
   </head>
   <body>
     <%- include('./header') %>
@@ -31,39 +57,63 @@
     <!-- ======================================== 
           Our Main Hero Section Start  
     ========================================  -->
-    <main>
+    <main>        
       <section class="mid">
-            <!-- Slider main container -->
-            <div class="swiper">
-              <!-- Additional required wrapper -->
-              <div class="swiper-wrapper">
-                <!-- Slides -->
-                
-                <% notices.forEach(function(notice) { %>
-                <div class="swiper-slide">
-                  <div class="notice">
-                    <div class="banner">
-                      <h2 class="heading"><%= notice.heading %></h2>
-                    </div>
-                    <div class="body">
-                        <%= notice.nbody %>
-                    </div>
-                    <div class="date"><%= notice.created_at %></div>
-                  </div>
-                </div>
-                <% }); %>
+        <section class="mid-left">
+            <ul class="menu-list">
+                <li><h1 class="welcome-text" 
+                    style="font-size:30px; 
+                    position: relative;
+                    padding: 0%; 
+                    text-align: center; 
+                    background: url(/images/grd2.jpg); 
+                    -webkit-background-clip: text; 
+                    font-family: 'Gochi Hand', 
+                    cursive;">
+                    Hi, <%= username %>.</h1></li>
+                <li><a class="menu-link menu-subtext" href="/addstudent">Add Student</a></li>
+                <li><a class="menu-link menu-subtext" href="/admin/updatestud">Update Student Details</a></li>
+                <li><a class="menu-link menu-subtext" href="/admin/publishnotice">Write a Notice</a></li>
+                <li><a class="menu-link menu-subtext" href="/admin/notices">Notices</a></li>
+                <li><a class="menu-link menu-subtext" href="/admin/regstaff">Register Staff</a></li>
+                <li><a class="menu-link menu-subtext" href="/admin/regward">Register Warden</a></li>
+                <li><a class="menu-link menu-subtext" href="/admin/changepass">Change Password</a></li>
+                <li><a class="menu-link menu-subtext" href="/admin/signout">Sign Out</a></li>
+              </ul>
+           </section>
 
-                              
-              </div>
-              <!-- If we need pagination -->
-              <div class="swiper-pagination"></div>
-            
-              <!-- If we need navigation buttons -->
-              <div class="swiper-button-prev"></div>
-              <div class="swiper-button-next"></div>
-            
+          <section class="mid-right" style="display: flex; flex-direction: column;">
+            <h1>Notices</h1>
+            <div class="table" style="min-width: 80vh; width: inherit; display: flex; justify-content: center;">
+                
+                <table>
+                <thead>
+                    <tr>
+                    <th>Heading</th>
+                    <th>Notice Body</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% notices.forEach(function(notice) { %>
+                    <tr>
+                        <td><%= notice.heading %></td>
+                        <td><%= notice.nbody %></td>
+                        <td><%= notice.created_at %></td>
+                        <td>
+                        <form action="/delete-notice" method="POST">
+                            <input type="hidden" name="noticeId" value="<%= notice.id %>">
+                            <button type="submit" class="delete-button">Delete</button>
+                        </form>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+                </table>
             </div>
-      </section>     
+          </section>
+      </section>
     </main>
 
      <!-- ======================================== 
@@ -82,39 +132,6 @@
       nomodule
       src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
     ></script>
-    <script src="/js/navbar.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-    <script>
-      const swiper = new Swiper('.swiper', {
-        loop: true,
-        navigation: {
-                      nextEl: '.swiper-button-next',
-                      prevEl: '.swiper-button-prev',
-                    },
-        slidesPerView: 4,
-        paginationClickable: true,
-        spaceBetween: 20,
-        breakpoints: {
-            1920: {
-                slidesPerView: 4,
-                spaceBetween: 20
-            },
-            1028: {
-                slidesPerView: 3,
-                spaceBetween: 20
-            },
-            480: {
-                slidesPerView: 2,
-                spaceBetween: 10
-            }
-        }
-
-        // And if we need scrollbar
-        // scrollbar: {
-        //   el: '.swiper-scrollbar',
-        // },
-      });
-    
-    </script>
+    <script src="js/navbar.js"></script>
   </body>
 </html>

@@ -6,7 +6,7 @@
 }
 .mid-right {
   min-height: 80vh;
-    height: auto;
+    height: inherit;
     width: 75vw;
     display: flex;
     flex-direction: row;
@@ -19,7 +19,7 @@
   }
 .mid-left {
     min-height: 80vh;
-    height: auto;
+    height: inherit;
     width: 25vw;
     display: flex;
     border-top: 5px solid #a5d8ff;
