@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
 const authController = require("../controllers/auth");
-const student = require("../controllers/student");
+const staffController = require("../controllers/staff");
+const studentController = require("../controllers/student");
 const router = express.Router();
 
 const mysql = require("mysql");
@@ -32,7 +33,7 @@ router.get('/NoticeBoard', (req, res) => {
 router.get('/Adminlog', (req, res) => {
     res.sendFile("adminlog.html", { root: './public/' })
 });
-router.get('/Stafflogin', (req, res) => {
+router.get('/Stafflog', (req, res) => {
     res.sendFile("stafflog.html", { root: './public/' })
 });
 router.get('/Studlog', (req, res) => {
@@ -41,6 +42,8 @@ router.get('/Studlog', (req, res) => {
 router.get('/wardlog', (req, res) => {
     res.sendFile("wardenlog.html", { root: './public/' })
 });
+
+
 
 //admin Routes
 router.use('/adminlogin',authController.adminlogin, (req, res) => {
@@ -55,6 +58,7 @@ router.get('/admin', authController.adminisLoggedIn, (req, res) => {
         res.sendFile("adminlog.html", { root: './public/' });
     }
 });
+//add student
 router.get('/addstudent', authController.adminisLoggedIn, (req, res) => {
     if (req.user) {
         // uname=req.user.username;
@@ -64,7 +68,7 @@ router.get('/addstudent', authController.adminisLoggedIn, (req, res) => {
         res.sendFile("home.html", { root: './public/' });
     }
 });
-router.use('/admin/addstudent', student.add, (req, res) => {
+router.use('/admin/addstudent', authController.addstudent, (req, res) => {
     if (req.user) {
         // uname=req.user.username;
         res.render("admindash",{username:req.user.username}),
@@ -74,6 +78,18 @@ router.use('/admin/addstudent', student.add, (req, res) => {
         res.sendFile("home.html", { root: './public/' });
     }
 })
+//update student
+router.get('/admin/updatestud', authController.adminisLoggedIn, (req, res) => {
+    res.render('updatestudent', { username: req.user.username, student: null });
+  });
+  
+// Search and update student details
+router.use('/admin/updatestudentdetails', authController.searchAndUpdateStudent);
+// Update student details
+router.use('/admin/updatestudent', authController.updateStudentDetails);
+  
+  
+
 //Notices
 router.get('/admin/publishnotice', authController.adminisLoggedIn, (req, res) => {
     if (req.user) {
@@ -83,7 +99,7 @@ router.get('/admin/publishnotice', authController.adminisLoggedIn, (req, res) =>
         return res.send("<script>alert('Login Required!'); window.location.href = '/';</script>");
     }
 });
-
+router.use('/publishnotice', authController.publishnotice);
 router.get('/admin/notices',authController.adminisLoggedIn, (req, res) => {
     db.query('SELECT * FROM notices', (err, results) => {
       if (err) {
@@ -116,7 +132,7 @@ router.get('/admin/regward', authController.adminisLoggedIn, (req, res) => {
         return res.send("<script>alert('Login Required!'); window.location.href = '/';</script>");
     }
 });
-router.use('/publishnotice',authController.publishnotice, (req, res) => {
+router.use('/Regward',authController.regward, (req, res) => {
     res.render("admindash",{username:req.user.username})
 });
 //Register Staff
@@ -132,10 +148,75 @@ router.use('/regstaff',authController.regstaff, (req, res) => {
     res.render("admindash",{username:req.user.username})
 });
 
+//Change Password
+router.get('/admin/changepass', authController.adminisLoggedIn, (req, res) => {
+    if (req.user) {
+        // uname=req.user.username;
+        res.sendFile("passchange.html", { root: './public/' })
+    } else {
+        return res.send("<script>alert('Login Required!'); window.location.href = '/';</script>");
+    }
+});
+router.use('/changepass',authController.adminChangePass, (req, res) => {
+    res.render("admindash",{username:req.user.username})
+});
+
 //signout
 router.use('/admin/signout',authController.adminlogout, (req, res) => {
     return res.send("<script>alert('Logged Out!'); window.location.href = '/';</script>");
 });
 
+
+// FOR STAFF
+// login
+router.post('/stafflog', staffController.stafflogin, (req, res) => {
+    res.render("rough", { username: req.user.username });
+});
+router.get('/staff', staffController.staffisLoggedIn, (req, res) => {
+    if (req.user) {
+        res.render("rough", { username: req.user.username });
+    } else {
+        console.log('Login Required!');
+        res.sendFile("stafflog.html", { root: './public/' });
+    }
+});
+
+//Mark Attendance
+router.get('/staff/markatd', staffController.staffisLoggedIn, (req, res) => {
+    if (req.user) {
+      const showMarkAttendance = true;
+      const currentDate = new Date().toLocaleDateString('en-GB'); // Get current date in DD-MM-YY format
+      db.query('SELECT * FROM attendance ORDER BY room ASC', (err, results) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.render('rough', { username: req.user.username, student: results, showMarkAttendance, today:currentDate });
+        }
+      });
+    } else {
+      console.log('Login Required!');
+      res.sendFile("stafflog.html", { root: './public/' });
+    }
+  });
+  
+
+// change password
+router.get('/staff/changepass', staffController.staffisLoggedIn, (req, res) => {
+    if (req.user) {
+        const showChangePassForm = true;
+        res.render('rough', { username: req.user.username ,showChangePassForm });
+    } else {
+        console.log('Login Required!');
+        res.sendFile("stafflog.html", { root: './public/' });
+    }
+});
+router.use('/staffchangepass',staffController.staffChangePass, (req, res) => {
+    res.render("rough",{username:req.user.username})
+});
+
+// sign out
+router.get('/staff/signout', staffController.stafflogout, (req, res) => {
+    return res.send("<script>alert('Logged Out!'); window.location.href = '/';</script>");
+});
 
 module.exports = router;

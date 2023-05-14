@@ -1,5 +1,5 @@
 .mid{
-    min-height: 80vh;
+    min-height: 60vh;
     height: auto;
     width:100vw;
     display: flex;
@@ -12,24 +12,19 @@
     background: #a5d8ff;
 }
   
-  .container{
-    max-width: 1280px;
-    height: 60vh;
-    display:flex;
-    align-items:center;
-  }
   .swiper-wrapper{
-    padding: 90px;
+    position: relative;
+    right: 0;
     
   }
-  .swiper-container {
+  /* .swiper-container {
       width: 100%;
       height: 100%;
-  }
+  } */
   .swiper-slide {
       text-align: center;
       font-size: 18px;
-      min-height: 60vw;
+      height: auto;
       min-width: 30vw;
       width: auto;
       padding: 5px;

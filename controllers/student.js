@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { promisify } = require("util");
 const path=require('path');
-const mailsender= require("./mailsender");
+// const mailsender= require("./mailsender");
 
 const db = mysql.createConnection({
     host: process.env.HOST,
@@ -24,55 +24,7 @@ const db = mysql.createConnection({
 //     return password;
 //   }
 
-exports.add = (req, res) => {
-    console.log(req.body);
-    const { enrollment, name, phone, parentphone, room, zipcode, city, state, address } = req.body;
-    db.query('SELECT enrollment from students WHERE enrollment = ?', [enrollment], async (err, results) => {
-      if (err) {
-        console.log(err);
-      } else {
-        if (results.length > 0) {
-          return res.send("<script>alert('Student Already Registered!'); window.location.href = '/addstudent';</script>");
-        }
-      }
-  
-      const password = parentphone;
-      console.log(password);
-  
-      let hashedPassword = await bcrypt.hash(password, 8);
-      console.log(hashedPassword);
-  
-      const email = enrollment + '@juetguna.in';
-      console.log(email);
-  
-      db.query('INSERT INTO students SET ?',
-        {
-          enrollment: enrollment,
-          name: name,
-          phone: phone,
-          parentphone: parentphone,
-          room: room,
-          zipcode: zipcode,
-          city: city,
-          state: state,
-          address: address,
-          password: hashedPassword
-        },
-        (err, results) => {
-          if (err) {
-            console.log(err);
-          } else {
-            // const toEmail = email;
-            // const subject = 'Password for HMS login';
-            // const message = password;
-  
-            // mailsender.sendEmail(toEmail, subject, message); // Call the sendEmail function from the emailModule
-  
-            return res.send("<script>alert('Student Registered Successfully!'); window.location.href = '/adminlogin';</script>");
-          }
-        });
-    });
-  };
+
   
 exports.login = async (req, res) => {
     try {
