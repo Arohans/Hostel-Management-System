@@ -92,9 +92,6 @@ exports.addstudent = (req, res) => {
       let hashedPassword = await bcrypt.hash(password, 8);
       console.log(hashedPassword);
   
-      const email = enrollment + '@juetguna.in';
-      console.log(email);
-  
       db.query('INSERT INTO students SET ?',
         {
           enrollment: enrollment,

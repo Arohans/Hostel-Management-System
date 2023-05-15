@@ -3,6 +3,7 @@ const app = express();
 const authController = require("../controllers/auth");
 const staffController = require("../controllers/staff");
 const studentController = require("../controllers/student");
+const warden = require("../controllers/warden");
 const router = express.Router();
 
 const mysql = require("mysql");
@@ -166,21 +167,128 @@ router.use('/admin/signout',authController.adminlogout, (req, res) => {
     return res.send("<script>alert('Logged Out!'); window.location.href = '/';</script>");
 });
 
+// FOR WARDEN
+// login
+router.use('/wardlog',warden.wardenlogin, (req, res) => {
+    res.render("rough",{username:req.user.username})
+});
+router.get('/ward', warden.wardenisLoggedIn, (req, res) => {
+    if (req.user) {
+        // uname=req.user.username;
+        res.render("rough",{username:req.user.username})
+    } else {
+        console.log('Login Required!');
+        res.sendFile("wardenlog.html", { root: './public/' });
+    }
+});
+
+//publish notices
+router.get('/warden/publishnotice', warden.wardenisLoggedIn, (req, res) => {
+    if (req.user) {
+        const wardenpublishnotice = true;
+        res.render('rough', { username: req.user.username ,wardenpublishnotice });
+    } else {
+        console.log('Login Required!');
+        res.sendFile("wardenlog.html", { root: './public/' });
+    }
+});
+router.use('/wardenpublishnotice', warden.publishnotice);
+router.get('/warden/notices',warden.wardenisLoggedIn, (req, res) => {
+    if (req.user) {
+        const wardennotice = true;
+            db.query('SELECT * FROM notices', (err, results) => {
+              if (err) {
+                console.log(err);
+              } else {
+                res.render('rough', { notices: results, username: req.user.username ,wardennotice});
+        
+              }
+            });
+      } else {
+        console.log('Login Required!');
+        res.sendFile("wardenlog.html", { root: './public/' });
+      }
+  });
+router.post('/warden-delete-notice', (req, res) => {
+  const noticeId = req.body.noticeId;
+  db.query('DELETE FROM notices WHERE id = ?', [noticeId], (err, results) => {
+    if (err) {
+      console.log(err);
+    } else {
+        return res.send("<script>alert('Notice deleted successfully!'); window.location.href = '/ward';</script>");
+
+    }
+  });
+});
+//student records
+router.get('/warden/studrec', warden.wardenisLoggedIn, (req, res) => {
+    if (req.user) {
+        const studentrecord = true;
+        res.render('rough', { username: req.user.username ,studentrecord });
+    } else {
+        console.log('Login Required!');
+        res.sendFile("wardenlog.html", { root: './public/' });
+    }
+});
+router.use('/warden/viewstudentrec', warden.wardenisLoggedIn, (req, res) => {
+    if (req.user) {
+        const studentrecord = true;
+        const enrollment = req.body.enrollment;
+  
+    db.query('SELECT * FROM students WHERE enrollment = ?', [enrollment], (err, results) => {
+      if (err) {
+        console.log(err);
+        res.render('rough', { username: req.user.username, student: null,studentrecord});
+      } else {
+        if (results.length > 0) {
+          const student = results[0]; // Get the first student from the results (assuming enrollment is unique)
+          res.render('rough', { username: req.user.username, student: student ,studentrecord});
+        } else {
+          res.render('rough', { username: req.user.username, student: null,studentrecord });
+        }
+      }
+    });
+    } else {
+        console.log('Login Required!');
+        res.sendFile("wardenlog.html", { root: './public/' });
+    }
+  });
+
+  
+
+//Change Password
+router.get('/warden/changepass', warden.wardenisLoggedIn, (req, res) => {
+    if (req.user) {
+        const showChangePassForm = true;
+        res.render('rough', { username: req.user.username ,showChangePassForm });
+    } else {
+        console.log('Login Required!');
+        res.sendFile("wardenlog.html", { root: './public/' });
+    }
+});
+router.use('/wardenchangepass',warden.wardenChangePass, (req, res) => {
+    res.render("rough",{username:req.user.username})
+});
+
+//signout
+router.use('/warden/signout',warden.wardenlogout, (req, res) => {
+    return res.send("<script>alert('Logged Out!'); window.location.href = '/';</script>");
+});
+
 
 // FOR STAFF
 // login
 router.post('/stafflog', staffController.stafflogin, (req, res) => {
-    res.render("rough", { username: req.user.username });
+    res.render("staff", { username: req.user.username });
 });
 router.get('/staff', staffController.staffisLoggedIn, (req, res) => {
     if (req.user) {
-        res.render("rough", { username: req.user.username });
+        res.render("staff", { username: req.user.username });
     } else {
         console.log('Login Required!');
         res.sendFile("stafflog.html", { root: './public/' });
     }
 });
-
 //Mark Attendance
 router.get('/staff/markatd', staffController.staffisLoggedIn, (req, res) => {
     if (req.user) {
@@ -190,30 +298,45 @@ router.get('/staff/markatd', staffController.staffisLoggedIn, (req, res) => {
         if (err) {
           console.log(err);
         } else {
-          res.render('rough', { username: req.user.username, student: results, showMarkAttendance, today:currentDate });
+          res.render('staff', { username: req.user.username, students: results, showMarkAttendance, today:currentDate });
         }
       });
     } else {
       console.log('Login Required!');
       res.sendFile("stafflog.html", { root: './public/' });
     }
-  });
-  
-
+});
+router.post('/staff/markattendance', staffController.markattendance);
+ //Maintenace Requests
+ router.get('/staff/mainreq', staffController.staffisLoggedIn, (req, res) => {
+    if (req.user) {
+      const showMaintenanceTable = true;
+      db.query('SELECT * FROM maintenance ORDER BY requested_on ASC', (err, results) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.render('staff', { username: req.user.username, maintenanceRequests: results, showMaintenanceTable});
+        }
+      });
+    } else {
+      console.log('Login Required!');
+      res.sendFile("stafflog.html", { root: './public/' });
+    }
+});
+router.post('/staff/markattendance', staffController.markattendance);
 // change password
 router.get('/staff/changepass', staffController.staffisLoggedIn, (req, res) => {
     if (req.user) {
         const showChangePassForm = true;
-        res.render('rough', { username: req.user.username ,showChangePassForm });
+        res.render('staff', { username: req.user.username ,showChangePassForm });
     } else {
         console.log('Login Required!');
         res.sendFile("stafflog.html", { root: './public/' });
     }
 });
 router.use('/staffchangepass',staffController.staffChangePass, (req, res) => {
-    res.render("rough",{username:req.user.username})
+    res.render("staff",{username:req.user.username})
 });
-
 // sign out
 router.get('/staff/signout', staffController.stafflogout, (req, res) => {
     return res.send("<script>alert('Logged Out!'); window.location.href = '/';</script>");

@@ -14,21 +14,19 @@ const db = mysql.createConnection({
 
 let userSave;
 
-exports.studentlogin = async (req, res) => {
+exports.wardenlogin = async (req, res) => {
     try {
         const { username, password } = req.body;
         if (!username || !password) {
-            return res.status(400).sendFile(path.resolve(__dirname, "../public/studentlog.html"), {
+            return res.status(400).sendFile(path.resolve(__dirname, "../public/wardenlog.html"), {
                 message: "Please provide a username and password"
             });
         }
-        db.query('SELECT * FROM staff WHERE enrollment = ?', [username], async (err, results) => {
+        db.query('SELECT * FROM warden WHERE username = ?', [username], async (err, results) => {
             if (!results || results.length === 0 || !await bcrypt.compare(password, results[0].password)) {
-                return res.send("<script>alert('Username or password is incorrect'); window.location.href = '/studlog';</script>");
+                return res.send("<script>alert('Username or password is incorrect'); window.location.href = '/wardlog';</script>");
             } else {
-                const username = results[0].enrollment;
-
-                console.log(username);
+                const username = results[0].username;
 
                 const token = jwt.sign({ username }, process.env.JWT_SECRET, {
                     expiresIn: 7776000
@@ -43,9 +41,9 @@ exports.studentlogin = async (req, res) => {
                     httpOnly: true
                 };
 
-                userSave = "student" + username; // Assign the value to the global variable
+                userSave = "warden" + username; // Assign the value to the global variable
                 res.cookie(userSave, token, cookieOptions);
-                res.status(200).redirect("/stud");
+                res.status(200).redirect("/ward");
             }
         });
     } catch (err) {
@@ -53,12 +51,12 @@ exports.studentlogin = async (req, res) => {
     }
 }
 
-exports.studentisLoggedIn = async (req, res, next) => {
+exports.wardenisLoggedIn = async (req, res, next) => {
     if (req.cookies[userSave]) { // Access the global variable here
         try {
             const decoded = await promisify(jwt.verify)(req.cookies[userSave], process.env.JWT_SECRET);
     
-            db.query('SELECT * FROM students WHERE enrollment = ?', [decoded.username], (err, results) => {
+            db.query('SELECT * FROM warden WHERE username = ?', [decoded.username], (err, results) => {
                 if (!results || results.length === 0) {
                     return next();
                 }
@@ -74,11 +72,26 @@ exports.studentisLoggedIn = async (req, res, next) => {
     }
 };
 
-  
-  
+
+exports.publishnotice = (req, res) => {
+    console.log(req.body);
+    
+    // Get the current date
+    const currentDate = new Date();
+
+    const { heading,nbody } = req.body;
+    db.query('INSERT INTO notices SET ?', { heading: heading, nbody:nbody, created_at:currentDate }, (err, results) => {
+        if (err) {
+            console.log(err);
+        } else {
+            return res.send("<script>alert('Notice Published!'); window.location.href = '/ward';</script>");
+        }
+    })
+    
+}
 
 
-exports.staffChangePass = async (req, res) => {
+exports.wardenChangePass = async (req, res) => {
     try {
         const { opass, npass, cnpass } = req.body;
 
@@ -88,7 +101,7 @@ exports.staffChangePass = async (req, res) => {
         );
 
         // Perform the password change in the database
-        db.query('SELECT * FROM staff WHERE username = ?', [decoded.username], async (err, results) => {
+        db.query('SELECT * FROM warden WHERE username = ?', [decoded.username], async (err, results) => {
             if (err) {
                 console.log(err);
                 return res.status(500).send("Internal Server Error");
@@ -120,7 +133,7 @@ exports.staffChangePass = async (req, res) => {
             console.log(hashedPassword);
 
             // Update the password in the database
-            db.query('UPDATE staff SET password = ? WHERE username = ?', [hashedPassword, decoded.username], (err, results) => {
+            db.query('UPDATE warden SET password = ? WHERE username = ?', [hashedPassword, decoded.username], (err, results) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).send("Internal Server Error");
@@ -138,7 +151,7 @@ exports.staffChangePass = async (req, res) => {
 };
 
 
-exports.studentlogout = (req, res) => {
+exports.wardenlogout = (req, res) => {
     res.cookie(userSave, 'logout', { // Use the correct `userSave` value here
         expires: new Date(Date.now() + 2 * 1000),
         httpOnly: true
