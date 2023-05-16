@@ -86,15 +86,15 @@
             <button type="submit">Submit Attendance</button>
           </form>
           <% } else if (typeof showMaintenanceTable !== 'undefined' && showMaintenanceTable !== null && showMaintenanceTable) { %>
-          <form action="/staff/maintenanceview" method="post">
+          <form action="/staff/maintenanceview" method="post" style="width:auto">
             <h1 style="margin: 0 0 30px 0; text-align: center;">Maintenance Requests</h1>
-            <table class="maintenance-table">
+            <table class="attendance-table">
               <thead>
                 <tr>
                   <th>Enrollment</th>
                   <th>Room</th>
                   <th>Request For</th>
-                  <th>Requested On</th>
+                  <th>Requested On</th>                 
                   <th>Complete</th>
                 </tr>
               </thead>
@@ -103,7 +103,7 @@
                 <tr>
                   <td><%= request.enrollment %></td>
                   <td><%= request.room %></td>
-                  <td><%= request.request %></td>
+                  <td><%= request.request_for %></td>                  
                   <td><%= request.requested_on %></td>
                   <td>
                     <input type="checkbox" name="complete[<%= request.id %>]" value="completed">

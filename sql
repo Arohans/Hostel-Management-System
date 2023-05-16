@@ -48,7 +48,7 @@ CREATE TABLE notices (
 
 CREATE TABLE maintenance (
     id INT PRIMARY KEY,
-    enrollment INT,
+    enrollment VARCHAR(255),
     room VARCHAR(255),
     request_for VARCHAR(255),
     requested_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

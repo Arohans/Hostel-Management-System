@@ -1,206 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <title>HMS</title>
+<html>
+<head>
+	<title>Leave Application Form</title>
 
-    <link rel="stylesheet" href="css/navbar.css" />
+	<link rel="stylesheet" href="css/navbar.css" />
     <link rel="stylesheet" href="css/cards.css" />
     <link rel="stylesheet" href="css/welcome-text.css" />
     <link rel="stylesheet" href="css/cat-welcome.css" />
     <link rel="stylesheet" href="css/form.css" />
-    <link rel="stylesheet" href="css/rough.css" />
+</head>
+<body>
+	<h2>Leave Application Form</h2>
+	<form method="POST" action="/process_leave">
+		<label for="from_date">From Date:</label>
+		<input type="date" id="from_date" name="from_date" required onchange="calculateDays()">
 
-    <link href='https://fonts.googleapis.com/css?family=Nunito:400,300' rel='stylesheet' type='text/css'>
-    <link
-       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
-    />
-    
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css?family=Gochi+Hand');
-    </style>
-  </head>
-  <body>
-    <header class="header">
-      <img class="logo_img"
-        src="images/logo.png"
-        alt="Hostel Management"
-        class="logo"
-      />
+		<label for="to_date">To Date:</label>
+		<input type="date" id="to_date" name="to_date" required onchange="calculateDays()">
 
-      <nav class="navbar">
-        <ul class="navbar-list">
-          <li><a class="navbar-link" href="/">Home</a></li>
-          <li><a class="navbar-link" href="/Profile">Profile</a></li>
-          <li><a class="navbar-link" href="/NoticeBoard">Notice Board</a></li>
-          <li><a class="navbar-link" href="/Contact">Contact</a></li>
-          <li><a class="navbar-link" href="/About">About</a></li>
-        </ul>
-      </nav>
+	
+		<fieldset> 
 
-      <div class="mobile-navbar-btn">
-        <ion-icon name="menu-outline" class="mobile-nav-icon"></ion-icon>
-        <ion-icon name="close-outline" class="mobile-nav-icon"></ion-icon>
-      </div>
-    </header>
+			<legend>Address on leave :</legend>
 
-    <!-- ======================================== 
-          Our Main Hero Section Start  
-    ========================================  -->
-    <main>
-      <section class="mid">
-            <!-- Slider main container -->
-            <div class="swiper">
-              <!-- Additional required wrapper -->
-              <div class="swiper-wrapper">
-                <!-- Slides -->
-                
-                <div class="swiper-slide">
-                  <div class="notice">
-                    <div class="banner">
-                      <h2 class="heading">Important Notice 1</h2>
-                    </div>
-                    <div class="body">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                      Nulla tristique sapien ac neque euismod iaculis. 
-                      Sed id lorem euismod, finibus turpis in, ultricies urna. 
-                      Duis id mi vel metus elementum rhoncus vel sed eros. 
-                      Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; 
-                      Sed ut elementum risus.
-                    </div>
-                    <div class="date">May 13, 2023</div>
-                  </div>
-                </div>
+			<label for="zipcode">Zipcode:</label>
+			<input type="text" id="zipcode" name="zipcode" required>
 
-                <div class="swiper-slide">
-                  <div class="notice">
-                    <div class="banner">
-                      <h2 class="heading">Important Notice 2</h2>
-                    </div>
-                    <div class="body">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                      Nulla tristique sapien ac neque euismod iaculis. 
-                      Sed id lorem euismod, finibus turpis in, ultricies urna. 
-                      Duis id mi vel metus elementum rhoncus vel sed eros. 
-                      Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; 
-                      Sed ut elementum risus.
-                    </div>
-                    <div class="date">May 13, 2023</div>
-                  </div>
-                </div>
+			<label for="city">City:</label>
+			<input type="text" id="city" name="city" readonly>
 
-                <div class="swiper-slide">
-                  <div class="notice">
-                    <div class="banner">
-                      <h2 class="heading">Important Notice 3</h2>
-                    </div>
-                    <div class="body">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                      Nulla tristique sapien ac neque euismod iaculis. 
-                      Sed id lorem euismod, finibus turpis in, ultricies urna. 
-                      Duis id mi vel metus elementum rhoncus vel sed eros. 
-                      Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; 
-                      Sed ut elementum risus.
-                    </div>
-                    <div class="date">May 13, 2023</div>
-                  </div>
-                </div>
+			<label for="state">State:</label>
+			<input type="text" id="state" name="state" readonly>
+						
+			<label for="address">Address:</label>
+			<textarea id="address" name="address" style="resize: none;" required></textarea>   
+	  
+		</fieldset> 
 
+		<label for="reason">Reason:</label>
+		<textarea id="reason" name="reason" rows="4" required></textarea>
 
-                
-                <div class="swiper-slide">Slide 5</div>
-                <div class="swiper-slide">Slide 6</div>
-                <div class="swiper-slide">Slide 7</div>
-                <div class="swiper-slide">Slide 8</div>
-                <div class="swiper-slide">Slide 9</div>
-                
-              
-              </div>
-              <!-- If we need pagination -->
-              <div class="swiper-pagination"></div>
-            
-              <!-- If we need navigation buttons -->
-              <div class="swiper-button-prev"></div>
-              <div class="swiper-button-next"></div>
-            
-              <!-- If we need scrollbar -->
-              <!-- <div class="swiper-scrollbar"></div> -->
-            </div>
-      </section>     
-    </main>
+		<label for="no_of_days">Number of Days:</label>
+		<input type="text" id="no_of_days" name="no_of_days" readonly>
 
-     <!-- ======================================== 
-          Our Footer Section Start  
-    ========================================  -->
-    <footer>
-      <section class="section-footer">
-        <div class="hero">
-          <ul class="icons">
-            <li><a href="https://www.linkedin.com"><ion-icon name="logo-linkedin"></ion-icon></a></li>
-            <li><a href="https://www.facebook.com"><ion-icon name="logo-facebook"></ion-icon></a></li>
-            <li><a href="https://www.instagram.com"><ion-icon name="logo-instagram"></ion-icon></a></li>
-        </ul>
-        <ul class="footer-menu">
-                <li><a href="/">Home</a></li>
-                <li><a href="/About">About</a></li>
-                <li><a href="/Contact">Contact Us</a></li>
-        </ul>
-            <div class="footer-copyright">
-                <p>Copyright @ 2023 All Rights Reserved.</p>
-            </div>
-        </div>
-      </section>
-    </footer>
+		<input type="submit" value="Submit">
+	</form>
 
-    <!-- ======================================== 
-          Our JavaScript Section Start  
-    ========================================  -->
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
-    ></script>
-    <script src="js/navbar.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-    <script>
-      const swiper = new Swiper('.swiper', {
-        loop: true,
-        navigation: {
-                      nextEl: '.swiper-button-next',
-                      prevEl: '.swiper-button-prev',
-                    },
-        slidesPerView: 4,
-        paginationClickable: true,
-        spaceBetween: 20,
-        breakpoints: {
-            1920: {
-                slidesPerView: 4,
-                spaceBetween: 20
-            },
-            1028: {
-                slidesPerView: 3,
-                spaceBetween: 20
-            },
-            480: {
-                slidesPerView: 2,
-                spaceBetween: 10
-            }
-        }
+	<script>
+		// Calculate number of days
+		function calculateDays() {
+			var from_date = new Date(document.getElementById("from_date").value);
+			var to_date = new Date(document.getElementById("to_date").value);
+			var diff_in_time = to_date.getTime() - from_date.getTime();
+			var diff_in_days = Math.ceil(diff_in_time / (1000 * 3600 * 24)) + 1;
+			document.getElementById("no_of_days").value = diff_in_days;
+		}
 
-        // And if we need scrollbar
-        // scrollbar: {
-        //   el: '.swiper-scrollbar',
-        // },
-      });
-    
-    </script>
-  </body>
+		// Set min attribute of date inputs to current date
+		document.getElementById("from_date").setAttribute("min", new Date().toISOString().slice(0,10));
+		document.getElementById("to_date").setAttribute("min", new Date().toISOString().slice(0,10));
+
+		fetch("pincode-dataset.csv")
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch city data");
+          }
+          return response.text();
+        })
+        .then(csv => {
+          const rows = csv.trim().split("\n").slice(1);
+          const zipcodes = rows.map(row => row.split(",")[0].trim());
+          const cities = rows.map(row => row.split(",")[1].trim());
+		  const states = rows.map(row => row.split(",")[2].trim());
+  
+  // Update city and state fields when zipcode is entered
+  document.getElementById("zipcode").addEventListener("input", event => {
+	const enteredZipcode = event.target.value;
+	const index = zipcodes.indexOf(enteredZipcode);
+	if (index !== -1) {
+	  const correspondingCity = cities[index];
+	  const correspondingState = states[index];
+	  document.getElementById("city").value = correspondingCity;
+	  document.getElementById("state").value = correspondingState;
+	} else {
+	  document.getElementById("city").value = "";
+	  document.getElementById("state").value = "";
+	}
+  });
+
+  // Calculate number of days initially
+  calculateDays();
+})
+.catch(error => {
+  console.error(error);
+});
+</script>
+</body>
 </html>
+

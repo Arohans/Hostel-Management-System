@@ -16,21 +16,19 @@ let userSave;
 
 exports.studentlogin = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        if (!username || !password) {
+        const { enrollment, password } = req.body;
+        if (!enrollment || !password) {
             return res.status(400).sendFile(path.resolve(__dirname, "../public/studentlog.html"), {
-                message: "Please provide a username and password"
+                message: "Please provide a enrollment and password"
             });
         }
-        db.query('SELECT * FROM staff WHERE enrollment = ?', [username], async (err, results) => {
+        db.query('SELECT * FROM students WHERE enrollment = ?', [enrollment], async (err, results) => {
             if (!results || results.length === 0 || !await bcrypt.compare(password, results[0].password)) {
-                return res.send("<script>alert('Username or password is incorrect'); window.location.href = '/studlog';</script>");
+                return res.send("<script>alert('enrollment or password is incorrect'); window.location.href = '/stud';</script>");
             } else {
-                const username = results[0].enrollment;
+                const enrollment = results[0].enrollment;
 
-                console.log(username);
-
-                const token = jwt.sign({ username }, process.env.JWT_SECRET, {
+                const token = jwt.sign({ enrollment }, process.env.JWT_SECRET, {
                     expiresIn: 7776000
                 });
 
@@ -43,7 +41,7 @@ exports.studentlogin = async (req, res) => {
                     httpOnly: true
                 };
 
-                userSave = "student" + username; // Assign the value to the global variable
+                userSave = "student" + enrollment; // Assign the value to the global variable
                 res.cookie(userSave, token, cookieOptions);
                 res.status(200).redirect("/stud");
             }
@@ -58,7 +56,7 @@ exports.studentisLoggedIn = async (req, res, next) => {
         try {
             const decoded = await promisify(jwt.verify)(req.cookies[userSave], process.env.JWT_SECRET);
     
-            db.query('SELECT * FROM students WHERE enrollment = ?', [decoded.username], (err, results) => {
+            db.query('SELECT * FROM students WHERE enrollment = ?', [decoded.enrollment], (err, results) => {
                 if (!results || results.length === 0) {
                     return next();
                 }
@@ -74,21 +72,102 @@ exports.studentisLoggedIn = async (req, res, next) => {
     }
 };
 
+exports.processLeave = async (req, res) => {
+    if (req.cookies[userSave]){
+    try {
+      const { from_date, to_date, zipcode, city, state, address, reason, image } = req.body;
   
+      // Get the username from the decoded token
+      const decoded = await promisify(jwt.verify)(req.cookies.userSave, process.env.JWT_SECRET);
+      const username = decoded.enrollment;
+  
+      // Fetch the room number from the database
+      db.query('SELECT * FROM students WHERE enrollment = ?', [username], async (err, results) => {
+        if (!results || results.length === 0) {
+          return res.status(401).send("User not found");
+        }
+  
+        const { room, name } = results[0];
+  
+        // Handle file upload
+        const imageFile = req.files.image;
+        const imageFileName = `${Date.now()}-${imageFile.name}`;
+        await imageFile.mv(path.join(__dirname, "public", "images", imageFileName));
+  
+        // Store the form data in the database
+        db.query(
+          "INSERT INTO leave_applications (username, name, room_no, from_date, to_date, zipcode, city, state, address, reason, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [username, name, room, from_date, to_date, zipcode, city, state, address, reason, imageFileName],
+          (err, result) => {
+            if (err) {
+              console.error(err);
+              return res.status(500).send("Failed to store leave application");
+            }
+            res.status(200).send("Leave application stored successfully");
+          }
+        );
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Failed to process leave application");
+    }
+    }
+  };
   
 
 
-exports.staffChangePass = async (req, res) => {
+exports.requestmaintenance = async (req, res, next) => {
+    if (req.cookies[userSave]) {
+        try {
+            console.log(req.body);
+            const currentDate = new Date().toLocaleDateString('en-GB'); // Get current date in DD-MM-YY format
+            
+            const decoded = await promisify(jwt.verify)(req.cookies[userSave], process.env.JWT_SECRET);
+            console.log(decoded);
+            
+            const { mreq } = req.body;
+
+            // Retrieve the 'room' value from the 'students' table based on 'enrollment'
+            db.query('SELECT room FROM students WHERE enrollment = ?', [decoded.enrollment], (err, results) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    const room = results[0].room; // Assuming there is only one row with the given enrollment
+                    // Insert the data into the 'maintenance' table
+                    db.query('INSERT INTO maintenance SET ?', {
+                        enrollment: decoded.enrollment,
+                        room: room,
+                        request_for: mreq                        
+                    }, (err, results) => {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            return res.send("<script>alert('Requested'); window.location.href = '/stud';</script>");
+                        }
+                    });
+                }
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    } else {
+        next();
+    }
+};
+
+
+
+exports.studentChangePass = async (req, res) => {
     try {
         const { opass, npass, cnpass } = req.body;
 
-        // Retrieve the logged-in user's username from the JWT token
+        // Retrieve the logged-in user's enrollment from the JWT token
          const decoded = await promisify(jwt.verify)(req.cookies[userSave],
             process.env.JWT_SECRET
         );
 
         // Perform the password change in the database
-        db.query('SELECT * FROM staff WHERE username = ?', [decoded.username], async (err, results) => {
+        db.query('SELECT * FROM students WHERE enrollment = ?', [decoded.enrollment], async (err, results) => {
             if (err) {
                 console.log(err);
                 return res.status(500).send("Internal Server Error");
@@ -120,13 +199,13 @@ exports.staffChangePass = async (req, res) => {
             console.log(hashedPassword);
 
             // Update the password in the database
-            db.query('UPDATE staff SET password = ? WHERE username = ?', [hashedPassword, decoded.username], (err, results) => {
+            db.query('UPDATE students SET password = ? WHERE enrollment = ?', [hashedPassword, decoded.enrollment], (err, results) => {
                 if (err) {
                     console.log(err);
                     return res.status(500).send("Internal Server Error");
                 }
 
-                return res.send("<script>alert('Password changed successfully!'); window.location.href = '/';</script>"); 
+                return res.send("<script>alert('Password changed successfully!'); window.location.href = '/stud';</script>"); 
 
                 
             });

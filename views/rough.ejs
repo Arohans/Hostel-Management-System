@@ -109,57 +109,57 @@
                 </table>
             
           <% }else if (typeof studentrecord !== 'undefined' && studentrecord !== null && studentrecord) { %>
-            <form action="/warden/viewstudentrec" method="POST">
-              <label for="enrollment">Enrollment:</label>
-              <input type="text" id="enrollment" name="enrollment" required>
-              <button type="submit">Search</button>
-            </form>
-        
-            <% if (typeof student !== 'undefined' && student !== null && student) { %>
-              <!-- Student Details Form -->
-              <form>
-                <fieldset>        
+                <form action="/warden/viewstudentrec" method="POST">
                   <label for="enrollment">Enrollment:</label>
-                  <input type="text" id="enrollment" name="enrollment" value="<%= student.enrollment %>" readonly>
-                
-                  <label for="name">Name:</label>
-                  <input type="text" id="name" name="name" value="<%= student.name %>" readonly>
-                
-                  <label for="phone">Phone Number:</label>
-                  <input type="tel" id="phone" name="phone" value="<%= student.phone %>" readonly>                 
-                    
-                  <label for="parentphone">Parent Phone Number:</label>
-                  <input type="tel" id="parentphone" name="parentphone" value="<%= student.parentphone %>" readonly>
-                
-                  <label for="room">Room Number:</label>
-                  <input type="text" id="room" name="room" value="<%= student.room %>" readonly>
-                
-                  <br>
-                
-                  <fieldset> 
-                    <legend>Address:</legend>
-                
-                    <label for="zipcode">Zipcode:</label>
-                    <input type="text" id="zipcode" name="zipcode" value="<%= student.zipcode %>" readonly>
-                
-                    <label for="city">City:</label>
-                    <input type="text" id="city" name="city" value="<%= student.city %>" readonly>
-                
-                    <label for="state">State:</label>
-                    <input type="text" id="state" name="state" value="<%= student.state %>" readonly>
-                                        
-                    <label for="address">Address:</label>
-                    <textarea id="address" name="address" style="resize: none;" readonly><%= student.address %></textarea>   
-                
-                  </fieldset> 
-                </fieldset>            
-              </form>
-            <% } %>
+                  <input type="text" id="enrollment" name="enrollment" required>
+                  <button type="submit">Search</button>
+                </form>
             
-          <% }else if (typeof leaveapplications !== 'undefined' && leaveapplications !== null && leaveapplications) { %>
+                <% if (typeof student !== 'undefined' && student !== null && student) { %>
+                  <!-- Student Details Form -->
+                  <form>
+                    <fieldset>        
+                      <label for="enrollment">Enrollment:</label>
+                      <input type="text" id="enrollment" name="enrollment" value="<%= student.enrollment %>" readonly>
+                    
+                      <label for="name">Name:</label>
+                      <input type="text" id="name" name="name" value="<%= student.name %>" readonly>
+                    
+                      <label for="phone">Phone Number:</label>
+                      <input type="tel" id="phone" name="phone" value="<%= student.phone %>" readonly>                 
+                        
+                      <label for="parentphone">Parent Phone Number:</label>
+                      <input type="tel" id="parentphone" name="parentphone" value="<%= student.parentphone %>" readonly>
+                    
+                      <label for="room">Room Number:</label>
+                      <input type="text" id="room" name="room" value="<%= student.room %>" readonly>
+                    
+                      <br>
+                    
+                      <fieldset> 
+                        <legend>Address:</legend>
+                    
+                        <label for="zipcode">Zipcode:</label>
+                        <input type="text" id="zipcode" name="zipcode" value="<%= student.zipcode %>" readonly>
+                    
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" value="<%= student.city %>" readonly>
+                    
+                        <label for="state">State:</label>
+                        <input type="text" id="state" name="state" value="<%= student.state %>" readonly>
+                                            
+                        <label for="address">Address:</label>
+                        <textarea id="address" name="address" style="resize: none;" readonly><%= student.address %></textarea>   
+                    
+                      </fieldset> 
+                    </fieldset>            
+                  </form>
+                <% } %>
+                
+                    <% }else if (typeof leaveapplications !== 'undefined' && leaveapplications !== null && leaveapplications) { %>
             <h1>Leave Applications</h1>
             
-            <table class="leave-table" style="width: auto;">
+            <table class="attendance-table" style="width: auto;">
               <thead>
                 <tr>
                   <th>Enrollment</th>
@@ -173,7 +173,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% leaveApplications.forEach(function(application) { %>
+                <% leaveapplications.forEach(function(application) { %>
                 <tr>
                   <td><%= application.username %></td>
                   <td><%= application.name %></td>

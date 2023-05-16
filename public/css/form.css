@@ -113,4 +113,42 @@
   }
 
 
-  
+  /* Styles for the container */
+.leave-container {
+  font-family: Arial, sans-serif;
+  width: 500px;
+  border: 1px solid #ccc;
+  background-color: #f4f7f8;
+  list-style: none;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20px;
+  padding: 20px;
+}
+
+/* Styles for the heading */
+.leave-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Styles for the paragraphs */
+.leave-container p {
+  margin-bottom: 10px;
+  color: red; /* Default color for paragraphs */
+}
+
+/* Styles for the approved status paragraph */
+.leave-container p.approved {
+  color: green;
+}
+
+/* Styles for the list */
+.leave-container ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+/* Styles for list items */
+.leave-container li {
+  margin-bottom: 5px;
+}
