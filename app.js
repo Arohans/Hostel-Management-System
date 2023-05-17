@@ -5,6 +5,8 @@ const app = express();
 const dotenv = require("dotenv").config();
 const cookieParser = require("cookie-parser");
 
+const port= process.env.PORT || 5000;
+
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json());
@@ -32,4 +34,4 @@ app.use('/auth', require('./routes/auth'));
 
 
 
-app.listen(5000)
+app.listen(port)
